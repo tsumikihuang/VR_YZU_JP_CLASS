@@ -23,6 +23,7 @@
 //
 // Acquired from https://github.com/steelejay/LowkeySpeech
 //
+using SimpleJSON;
 using UnityEngine;
 using System;
 using System.IO;
@@ -54,7 +55,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
 	//A handle to the attached AudioSource
 	private AudioSource goAudioSource;
 
-	public string apiKey;
+	public string apiKey= "";
 
 	// Use this for initialization
 	void Start () {
@@ -257,9 +258,16 @@ public class GoogleVoiceSpeech : MonoBehaviour {
             {
                 var result = streamReader.ReadToEnd();
                 static_class.google_speeching = false;//************************************************
+                //result_global = result;
+               
                 Debug.Log("Response:" + result);
                 //******************************************************************
-                if (result != "{}\n") { 
+                JSONObject playerJson = (JSONObject)JSON.Parse(result);
+
+                result_global = playerJson["results"].AsArray[0]["alternatives"].AsArray[0]["transcript"];
+                
+                /*
+                 if (result != "{}\n") { 
                     string[] str_array = result.Split('\n');    //result.Split()回傳string[]
                     string[] str2_array = str_array[5].Split('"');
                     result_global = str2_array[3];
@@ -268,6 +276,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
                 {
                     result_global = "";
                 }
+                */
             }
 
         } catch (WebException ex) {

@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-C:/Users/user/Desktop/1008教學-14.apk
+C:/Users/user/Desktop/1015教學-3.apk
 SceneListBegin?
 Assets/Scenes/home.unity
 Assets/Scenes/course.unity
