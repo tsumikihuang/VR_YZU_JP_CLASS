@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-C:/Users/user/Desktop/1015教學-3.apk
+C:/Users/user/Desktop/1118日語教學.apk
 SceneListBegin?
 Assets/Scenes/home.unity
 Assets/Scenes/course.unity
@@ -239,7 +239,7 @@ a455c7a94d636e997cf13415fea7bbb1 Assembly-CSharp.dll:UnityStandardAssets.Utility
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.ForcedReset
 202ddcdf9392f5f9809cc33a273f8b5e Assembly-CSharp.dll:UnityStandardAssets.Utility.SmoothFollow
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.GvrPointerManager
-d623fdfcdbb1a9448b5547496b58b315 Assembly-CSharp.dll:.GoogleVoiceSpeech
+7c578fc22aced71842695bd5c0ed3ded Assembly-CSharp.dll:.GoogleVoiceSpeech
 486cd95c82d8305219c352c06b776e1f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:UnityStandardAssets.CrossPlatformInput.MobileControlRig
 447ce260cf7ccbcd3c5d8c6080442520 Assembly-CSharp.dll:.HighQualityPlayback
@@ -247,6 +247,7 @@ d623fdfcdbb1a9448b5547496b58b315 Assembly-CSharp.dll:.GoogleVoiceSpeech
 0e071e8c9b835f56b2090ddc703cc62a Assembly-CSharp.dll:.GvrTrackedController
 114f0cc7a933eba0210dca55a814a26d Assembly-CSharp.dll:.GvrLaserPointer
 eaf0bcdb10d442a4029d615f41d09957 Unity.TextMeshPro.dll:TMPro.TextContainer
+cecf74a4a014467f492fa5579fb4b397 Facebook.Unity.Settings.dll:Facebook.Unity.Settings.FacebookSettings
 94c0a8178733bc5e1dd26d514f4fc917 Assembly-CSharp.dll:UnityStandardAssets.Cameras.FreeLookCam
 201273fb4f889724fb090164b7d6c657 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 486cd95c82d8305219c352c06b776e1f UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
@@ -367,7 +368,7 @@ c31ff9acb65f7a15b5c6fd77c3314d83 Vuforia.UnityExtensions.dll:Vuforia.WireframeBe
 486cd95c82d8305219c352c06b776e1f Vuforia.UnityExtensions.dll:Vuforia.WireframeTrackableEventHandler
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:Gvr.Internal.EmulatorClientSocket
 5c79f77e8bdc4433e7f19266d4a50278 Assembly-CSharp.dll:.GvrControllerInput
-d02ffce2a8fa724688280a289e59377f Assembly-CSharp.dll:.VideoController
+4bcaef55bb6dc5a452ac76e8718a09a9 Assembly-CSharp.dll:.VideoController
 2d1ef5186ac8f5ee44b3e43d9ff420bb Assembly-CSharp.dll:GoogleVR.HelloVR.HelloVRManager
 e241599c091a039de89f5e0a1c125183 Assembly-CSharp.dll:.GvrControllerReticleVisual
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.DetectInternetSpeed

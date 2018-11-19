@@ -10,8 +10,9 @@ public class choose : MonoBehaviour {
     private int course_id = 0;
     private int Course_len = 0;
     private string url = "https://vrteachingmaterial.github.io/JPcourse_JSON/JPcourse.json";
-	//"https://yzu-vmlab-team.github.io/JPcourse_JSON/JPcourse.json";	
-	
+	//"https://yzu-vmlab-team.github.io/JPcourse_JSON/JPcourse.json";
+
+    bool is_net=true;
     private WWW www = null;
     string jsonString;
 
@@ -39,17 +40,20 @@ public class choose : MonoBehaviour {
 
     }
     public void onclick(){
-        static_class.course_id = course_id;
-        static_class.clip_id = 0;
-        SceneManager.LoadScene(1);
+        if (is_net)
+        {
+            static_class.course_id = course_id;
+            static_class.clip_id = 0;
+            SceneManager.LoadScene(1);
+        }
     }
-    public void onclick2()
+    public void onclick3()
     {
         if (course_id != Course_len - 1) course_id++;
         else course_id = 0;
         btn_middle.GetComponentInChildren<Text>().text = static_class.Courses[course_id].Name;
     }
-    public void onclick3()
+    public void onclick2()
     {
         if (course_id != 0) course_id--;
         else course_id = Course_len - 1;
@@ -72,7 +76,7 @@ public class choose : MonoBehaviour {
 
             btn_middle.GetComponentInChildren<Text>().text = static_class.Courses[course_id].Name;
         }
-        if (Input.GetButtonDown("C"))   //enter
+        if (Input.GetButtonDown("C") && is_net)   //enter
         {
             static_class.course_id = course_id;
             static_class.clip_id = 0;
@@ -82,17 +86,19 @@ public class choose : MonoBehaviour {
             static_class.btn_mode = 0;
             SceneManager.LoadScene(1);
         }
-        if (Input.GetKeyDown(KeyCode.L))
-        {
-            Load();
-            //Debug.Log(Name);
-        }
     }
     
     void Load()
     {
         JSONObject playerJson = (JSONObject)JSON.Parse(jsonString);
 
+        if (playerJson == null)//沒有網路
+        {
+            is_net = false;
+            btn_middle.GetComponentInChildren<Text>().text = "沒感測到網路，請重啟APP";
+            Debug.Log("沒有獲取json檔，可能是因為沒有網路");
+            return;
+        }
         //取得資料數
         Course_len = playerJson["course_length"];
         Debug.Log("course_length : " + Course_len);
@@ -116,7 +122,17 @@ public class choose : MonoBehaviour {
                 cl_info.Time = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["time"];
                 //cl_info.Length = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["length"];
                 cl_info.Ques = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["ques"];
-                cl_info.Ans = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["ans"];
+                cl_info.Start_nosound = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["start_nosound"];
+                cl_info.End_nosound = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["end_nosound"];
+                cl_info.Ans_len = playerJson["courses"].AsArray[i]["clips"].AsArray[j]["ans_len"];
+
+                //建立ans陣列
+                cl_info.Ans = new List<string>();
+                for (int k = 0; k < cl_info.Ans_len; k++)
+                {
+                    cl_info.Ans.Add(playerJson["courses"].AsArray[i]["clips"].AsArray[j]["ans"].AsArray[k]);
+                }
+
                 //***
                 co_info.Clips.Add(cl_info);
             }

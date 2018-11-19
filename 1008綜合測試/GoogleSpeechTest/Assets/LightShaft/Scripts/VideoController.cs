@@ -43,10 +43,13 @@ public class VideoController : MonoBehaviour
     [Header("Loading control")]
     public GameObject loadingPanel;
     public Text loadingMessage;
+    public Text status;
 
+    bool firsttime=true;
 
     private void Start()
     {
+        status.text = "影片讀取中，請稍等。";
         p_btn = play_btn.GetComponent<Button>();
         p_btn.onClick.AddListener(Play_video);
         static_class.finished_last_record = false;
@@ -66,9 +69,24 @@ public class VideoController : MonoBehaviour
     
     IEnumerator Example()
     {
-        Debug.Log(Time.time+"11111111111111111111111111111111111111111111111111111111111111111111");
-        yield return new WaitForSeconds(static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time);
-        Debug.Log(Time.time+"22222222222222222222222222222222222222222222222222222222222222222222");
+        int time_gap;
+        int longer= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound;
+        if (static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time> static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound)
+        {
+            longer = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time;
+        }
+        if (static_class.clip_id == 0)
+        {
+            time_gap = longer;
+        }
+        else
+        {   //這次的時間點-上次的時間點
+            if (static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].Time> static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].End_nosound)
+                time_gap = longer - static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].Time;
+            else
+                time_gap = longer - static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].End_nosound;
+        }
+        yield return new WaitForSeconds(time_gap);
         sourceVideo.Pause();
         sourceAudioVideo.Pause();
     }
@@ -78,27 +96,32 @@ public class VideoController : MonoBehaviour
         switch (static_class.btn_mode)
         {
             case 0:     //播放
-                quesText.text = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ques;
-                //如果是最後問題回答完，撥放完就回首頁
-                if (static_class.finished_last_record)
-                {                           //撥放完就沒了，接下來回首頁
-                    p_btn.GetComponentInChildren<Text>().text = "Home";
-                    static_class.btn_mode = 3;
+                if (static_class.movie_OK == true)
+                {
+                    quesText.text = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ques;
+                    //如果是最後問題回答完，撥放完就回首頁
+                    if (static_class.finished_last_record)
+                    {                           //撥放完就沒了，接下來回首頁
+                        status.text = "已經是最後一題，回首頁。";
+                        p_btn.GetComponentInChildren<Text>().text = "Home";
+                        static_class.btn_mode = 3;
+                    }
+                    else
+                    {                           //撥放完要回答問題
+                        status.text = "影片停止後，按下按鈕開始錄製回答。";
+                        p_btn.GetComponentInChildren<Text>().text = "Start Record";
+                        static_class.btn_mode = 1;
+                    }
+                    sourceVideo.Play();
+                    sourceAudioVideo.Play();
+                    StartCoroutine(Example());
                 }
-                else
-                {                           //撥放完要回答問題
-                    p_btn.GetComponentInChildren<Text>().text = "Start Record";
-                    static_class.btn_mode = 1;
-                }
-                sourceVideo.Play();
-                sourceAudioVideo.Play();
-                Debug.Log ( "000000000000000000000000000000000000000000");
-                StartCoroutine(Example());
                 break;
             case 1:     //開始錄音，接下來結束錄音
-                if (!static_class.google_speeching)  //如果語音還再辨識中，就不執行以下
+                if (!static_class.google_speeching && !sourceVideo.isPlaying)  //如果語音還再辨識中，就不執行以下
                 {
                     static_class.btn_mode = 2;
+                    status.text = "答案錄製中，按下按鈕停止錄音。";
                     p_btn.GetComponentInChildren<Text>().text = "Stop Record";
                     static_class.do_record = true;
                     static_class.google_speeching = true;
@@ -107,6 +130,7 @@ public class VideoController : MonoBehaviour
             case 2:     //結束錄音
                 if (!static_class.ans_is_OK)    //接下來再回答一次      //如果OK的情況寫在VideoController.cs
                 {
+                    status.text = "回答未達標準，再次錄製回答。";
                     static_class.btn_mode = 1;
                     p_btn.GetComponentInChildren<Text>().text = "Start Record";
                 }
@@ -149,6 +173,17 @@ public class VideoController : MonoBehaviour
 
     void Update()
     {
+
+        if (currentVideoDuration >= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Start_nosound &&
+            currentVideoDuration <= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound)
+        {
+            sourceVideo.GetComponent<AudioSource>().volume = 0;
+        }else{
+            sourceVideo.GetComponent<AudioSource>().volume = 1;
+        }
+        Debug.Log(sourceVideo.GetComponent<AudioSource>().volume);
+        Debug.Log("currentVideoDuration : " + currentVideoDuration);
+
         if (Input.GetButtonDown("A"))
         {
         }
@@ -167,21 +202,13 @@ public class VideoController : MonoBehaviour
         //***********************************************************************************
         if (run_first)
         {
-            if (static_class.movie_OK == false)
-            {      //影片還沒跑好，所以還不要跳出來
-
-            }
-            else
+            if (static_class.movie_OK == true)//影片跑好了~
             {
-                //int i = Seek();
-                //if (i == 1)
-                //{
                 Play_video();
                 run_first = false;
             }
-            //}
         }
-        //Debug.Log(progressSlider.value);
+        //***********************************************************************************
         if (sourceVideo.isPlaying && progressSlider != null)
         {
             totalVideoDuration = Mathf.RoundToInt(sourceVideo.frameCount / sourceVideo.frameRate);
@@ -243,7 +270,6 @@ public class VideoController : MonoBehaviour
     private bool finished = false;
     public int Seek()
     {
-        //Debug.Log("Seek()! ! ! ! !  ! ! ! !  ! ! ! ! ! ! ! !  ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !");
         sourceVideo.GetComponent<HighQualityPlayback>().isSyncing = true;
         //check if can seek
 		if (Mathf.RoundToInt(currentVideoDuration) != Mathf.RoundToInt(totalVideoDuration))

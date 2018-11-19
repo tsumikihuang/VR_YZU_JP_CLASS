@@ -56,9 +56,10 @@ public class GoogleVoiceSpeech : MonoBehaviour {
 	private AudioSource goAudioSource;
 
 	public string apiKey= "";
+    public Text status;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
         //###
         p_btn = play_btn.GetComponent<Button>();
         ans_wrong = 0;
@@ -160,31 +161,56 @@ public class GoogleVoiceSpeech : MonoBehaviour {
                         string transcripts = jsonResults["alternative"][0]["transcript"].ToString();
 
                         Debug.Log("transcript string: " + transcripts);
-
-
+                        
                     }
+
                     //goAudioSource.Play(); //Playback the recorded audio
 
                     File.Delete(filePath); //Delete the Temporary Wav file
 
                 }
                 ansText.text = result_global;
-                //GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 + 25, 200, 50), "Recording in progress...");
 
-                string true_ans = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ans;
-                float num_of_error = Compute(true_ans, result_global);
-                float compute = 100 * (1 - num_of_error / true_ans.Length);
-                if (compute < 0)
-                    compute = 0;
-                if (compute < 60)
+                string temp_true_ans = "";
+                string true_ans="";
+                float num_of_error = 0.0f;
+                float temp_compute = 0.0f;      //暫時的compute數值
+                float compute = 0.0f;   //最終的compute數值
+                if (result_global != null)
                 {
-                    ans_wrong++;
-                    if (ans_wrong == 3)        //如果回答錯三次，就不管他，讓他過
+                    true_ans = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ans[0];
+                    for (int i = 0; i < static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ans_len; i++)
+                    {
+                        temp_true_ans = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Ans[i];
+                        num_of_error = Compute(temp_true_ans, result_global);
+                        temp_compute = 100 * (1 - num_of_error / temp_true_ans.Length);
+                        if (temp_compute > compute)
+                        {
+                            compute = temp_compute;
+                            true_ans = temp_true_ans;
+                        }
+                    }
+                    if (compute < 0)
+                        compute = 0;
+                    if (compute < 60)
+                    {
+                        ans_wrong++;
+                        if (ans_wrong == 3)
+                        {        //如果回答錯三次，就不管他，讓他過
+                            static_class.ans_is_OK = true;
+                            status.text = "錯超過三次，按下按鈕繼續影片";
+                        }
+                    }
+                    else
+                    {
                         static_class.ans_is_OK = true;
+                        status.text = "回答達標準，按下按鈕繼續影片";
+                    }
                 }
-                else
-                    static_class.ans_is_OK = true;
-                
+                else       //result_global == null
+                {
+                    ansText.text = "沒有收到你的回答";
+                }
                 if (static_class.ans_is_OK)         //接下來繼續Play
                 {
                     ans_wrong = 0;
@@ -197,14 +223,8 @@ public class GoogleVoiceSpeech : MonoBehaviour {
                     else
                         static_class.clip_id++;
                 }
-                Debug.Log(num_of_error);
                 scoreText.text = compute.ToString();
-
                 trueAns.text = true_ans;
-
-                Debug.Log(compute + "------------------------------------------------------------------");
-                Debug.Log(ans_wrong + "------------------------------------------------------------------");
-                Debug.Log(static_class.ans_is_OK + "------------------------------------------------------------------");
             }
         }
         else // No microphone
@@ -266,17 +286,6 @@ public class GoogleVoiceSpeech : MonoBehaviour {
 
                 result_global = playerJson["results"].AsArray[0]["alternatives"].AsArray[0]["transcript"];
                 
-                /*
-                 if (result != "{}\n") { 
-                    string[] str_array = result.Split('\n');    //result.Split()回傳string[]
-                    string[] str2_array = str_array[5].Split('"');
-                    result_global = str2_array[3];
-                }
-                else//如果是空字串
-                {
-                    result_global = "";
-                }
-                */
             }
 
         } catch (WebException ex) {

@@ -7,7 +7,10 @@ public static class static_class
         public int Time;
         //public int Length;
         public string Ques;
-        public string Ans;
+        public int Start_nosound;
+        public int End_nosound;
+        public int Ans_len;
+        public List<string> Ans;
     }
     public struct course_info
     {
