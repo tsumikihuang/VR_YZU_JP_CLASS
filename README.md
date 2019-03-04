@@ -2,4 +2,4 @@
 元智大學日文課教具開發
 實作>> Unity + cardboard + Google Cloud Speech +JSON
 <br/>DEMO影片>> https://www.youtube.com/watch?v=LafIYAmSHQQ
-<br/>
+<br/>JSON修改網址 >> https://vrteachingmaterial.github.io/JPcourse_JSON/%E8%A1%A8%E5%96%AE.html
