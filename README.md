@@ -1,5 +1,6 @@
 # VR_YZU_JP_CLASS
 元智大學日文課教具開發
-<br/>雲端備份網址:https://drive.google.com/drive/folders/1lfMoWAryNqqN2YLekpRgfEokdUlG74ka?usp=sharing
-<br/>操作教學PPT:https://gyzuedutw-my.sharepoint.com/:p:/g/personal/s1053320_g_yzu_edu_tw/EbcUKxQ5RJVBsvnOPQadjWwBANWeHwAHqPvDNv8xH0eBOA?e=TlsXM0
-<br/>
+實作>> Unity + cardboard + Google Cloud Speech +JSON
+<br/>Google Play商店 >> https://play.google.com/store/apps/details?id=com.tsumikihuang.vrcourse
+<br/>DEMO影片 >> https://www.youtube.com/watch?v=LafIYAmSHQQ
+<br/>JSON修改網址 >> https://vrteachingmaterial.github.io/JPcourse_JSON/%E8%A1%A8%E5%96%AE.html
