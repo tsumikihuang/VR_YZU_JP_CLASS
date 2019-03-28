@@ -10,7 +10,9 @@ public class choose : MonoBehaviour {
     private int course_id = 0;
     private int Course_len = 0;
     private string url = "https://vrteachingmaterial.github.io/JPcourse_JSON/JPcourse.json";
-	//"https://yzu-vmlab-team.github.io/JPcourse_JSON/JPcourse.json";
+    //"https://yzu-vmlab-team.github.io/JPcourse_JSON/JPcourse.json";
+
+    public Text count3Text;
 
     bool is_net=true;
     private WWW www = null;
@@ -39,13 +41,40 @@ public class choose : MonoBehaviour {
         btn_middle.GetComponentInChildren<Text>().text = static_class.Courses[0].Name;
 
     }
-    public void onclick(){
-        if (is_net)
-        {
-            static_class.course_id = course_id;
-            static_class.clip_id = 0;
-            SceneManager.LoadScene(1);
+    bool is_there=false;
+
+    IEnumerator CountThree()
+    {
+        count3Text.text = "3";
+        yield return new WaitForSeconds(1);
+        if (is_there){
+            count3Text.text = "2";
+            yield return new WaitForSeconds(1);
+            if (is_there){
+                count3Text.text = "1";
+                yield return new WaitForSeconds(1);
+                if (is_there){
+                    count3Text.text = "0";
+                    if (is_net){
+                        static_class.course_id = course_id;
+                        static_class.clip_id = 0;
+                        SceneManager.LoadScene(1);
+                    }
+                }
+            }
         }
+        count3Text.text = "";
+        is_there = false;
+    }
+
+    public void onclick()
+    {
+        is_there = true;
+        StartCoroutine(CountThree());
+    }
+    public void exitpoint ()
+    {
+        is_there = false;
     }
     public void onclick3()
     {

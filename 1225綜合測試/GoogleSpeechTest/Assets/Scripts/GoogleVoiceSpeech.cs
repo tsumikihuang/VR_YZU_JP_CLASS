@@ -35,10 +35,12 @@ using UnityEngine.UI;
 [RequireComponent (typeof (AudioSource))]
 
 public class GoogleVoiceSpeech : MonoBehaviour {
+    public Button pic_button;
+    public Sprite play_icon;
 
     public Text ansText,scoreText,trueAns;
     public Button play_btn;
-    private Button p_btn;
+    private Button p_btn,pic_btn;
     private bool is_record=false;
     private GUIStyle guiStyle = new GUIStyle(); //create a new variable
     private int ans_wrong=0;
@@ -60,6 +62,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        pic_btn = pic_button.GetComponent<Button>();
         //###
         p_btn = play_btn.GetComponent<Button>();
         ans_wrong = 0;
@@ -144,7 +147,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
                     Directory.CreateDirectory(Path.GetDirectoryName(filePath));
                     SavWav.Save(filePath, goAudioSource.clip); //Save a temporary Wav File
                     Debug.Log("Saving @ " + filePath);
-                    string apiURL = "https://speech.googleapis.com/v1/speech:recognize?&key=AIzaSyAti4kyTwgVbXXmEVJ6_Z7ezoxzJmJGcw4";
+                    string apiURL = "https://speech.googleapis.com/v1/speech:recognize?&key=AIzaSyAALjhOYHq08wHaDdbRrq16turvix_Xwws";
                     string Response;
 
                     Debug.Log("Uploading " + filePath);
@@ -217,6 +220,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
                     ans_wrong = 0;
                     static_class.btn_mode = 0;
                     p_btn.GetComponentInChildren<Text>().text = "Play";
+                    pic_btn.image.sprite = play_icon;
                     static_class.ans_is_OK = false;
                     //如果這是最後一個回答
                     if (static_class.clip_id == static_class.Courses[static_class.course_id].Clips_len - 1)
@@ -249,8 +253,7 @@ public class GoogleVoiceSpeech : MonoBehaviour {
         Debug.Log(string.Format("Uploading {0} to {1}", file, url));
 
         Byte[] bytes = File.ReadAllBytes(file);
-        String file64 = Convert.ToBase64String(bytes,
-                                         Base64FormattingOptions.None);
+        String file64 = Convert.ToBase64String(bytes,Base64FormattingOptions.None);
 
         Debug.Log(file64);
 
@@ -292,7 +295,9 @@ public class GoogleVoiceSpeech : MonoBehaviour {
         } catch (WebException ex) {
          var resp = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();
                     Debug.Log(resp);
- 
+            static_class.google_speeching = false;
+            ansText.text = "您的網路收訊不好，請檢查一下!";
+
         }
 
         return "empty";

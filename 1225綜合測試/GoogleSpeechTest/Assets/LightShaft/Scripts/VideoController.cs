@@ -11,7 +11,14 @@ public class VideoController : MonoBehaviour
     public Text quesText;
     private bool run_first;
     public Button play_btn;
-    Button p_btn;
+    Button p_btn,pic_btn;
+    public Text count3Text;
+
+    public Button pic_button;
+    public Sprite microphone_icon;
+    public Sprite record_icon;
+    public Sprite play_icon;
+    public Sprite home_icon;
 
     private bool noHD;
 
@@ -46,9 +53,14 @@ public class VideoController : MonoBehaviour
     public Text status;
 
     bool firsttime=true;
+    int now_nosound;
+    int now_startsound;
 
     private void Start()
     {
+        pic_btn = pic_button.GetComponent<Button>();
+        now_nosound = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Start_nosound;
+        now_startsound = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound;
         status.text = "影片讀取中，請稍等。";
         p_btn = play_btn.GetComponent<Button>();
         p_btn.onClick.AddListener(Play_video);
@@ -69,29 +81,80 @@ public class VideoController : MonoBehaviour
     
     IEnumerator Example()
     {
-        int time_gap;//到下一次回答問題過多久
-        int longer= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound;
-        if (static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time> static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound)
-        {
-            longer = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time;
-        }
-        if (static_class.clip_id == 0)
-        {
-            time_gap = longer;
-        }
-        else
-        {   //這次的時間點-上次的時間點
-            if (static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].Time> static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].End_nosound)
-                time_gap = longer - static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].Time;
-            else
-                time_gap = longer - static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].End_nosound;
+        int time_gap;//到下一次回答問題過多久(影片播放長度)
+        //要改成 >> 這次問題點-上次問題點
+        if (static_class.clip_id == 0){
+            time_gap = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time;
+        }else{
+                time_gap = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Time - static_class.Courses[static_class.course_id].Clips[static_class.clip_id - 1].Time;
         }
         yield return new WaitForSeconds(time_gap);
 
         sourceVideo.Pause();
         sourceAudioVideo.Pause();
     }
-    
+
+    public void pushBTN()
+    {
+        if (!static_class.google_speeching && !sourceVideo.isPlaying)
+        {
+            StartCoroutine(CountThree("btn"));
+            is_there = true;
+        }
+    }
+    public void exitpoint()
+    {
+        if (is_recording)
+        {
+            Play_video();//停止錄音
+            is_recording = false;
+        }
+        else
+        {
+            is_there = false;
+        }
+    }
+
+    public void pushHOME_BTN()
+    {
+        StartCoroutine(CountThree("home"));
+        is_there = true;
+    }
+
+    bool is_there = false;
+    bool is_recording = false;
+
+    IEnumerator CountThree(string mode)
+    {
+        count3Text.text = "3";
+        yield return new WaitForSeconds(1);
+        if (is_there)
+        {
+            count3Text.text = "2";
+            yield return new WaitForSeconds(1);
+            if (is_there)
+            {
+                count3Text.text = "1";
+                yield return new WaitForSeconds(1);
+                if (is_there)
+                {
+                    if (mode == "home")
+                    {
+                        static_class.btn_mode = 0;
+                        SceneManager.LoadScene(0);
+                    }
+                    else {
+                        is_recording = true;
+                        count3Text.text = "0";
+                        Play_video();
+                    }
+                }
+            }
+        }
+        count3Text.text = "";
+        is_there = false;
+    }
+
     public void Play_video()
     {
         switch (static_class.btn_mode)
@@ -105,6 +168,7 @@ public class VideoController : MonoBehaviour
                     {                           //撥放完就沒了，接下來回首頁
                         status.text = "已經是最後一題，回首頁。";
                         p_btn.GetComponentInChildren<Text>().text = "Home";
+                        pic_btn.image.sprite = home_icon;
                         static_class.btn_mode = 3;
                         sourceVideo.Play();
                         sourceAudioVideo.Play();
@@ -115,6 +179,7 @@ public class VideoController : MonoBehaviour
                     {                           //撥放完要回答問題
                         status.text = "影片停止後，按下按鈕開始錄製回答。";
                         p_btn.GetComponentInChildren<Text>().text = "Start Record";
+                        pic_btn.image.sprite = microphone_icon;
                         static_class.btn_mode = 1;
                         sourceVideo.Play();
                         sourceAudioVideo.Play();
@@ -123,11 +188,12 @@ public class VideoController : MonoBehaviour
                 }
                 break;
             case 1:     //開始錄音，接下來結束錄音
-                if (!static_class.google_speeching && !sourceVideo.isPlaying)  //如果語音還再辨識中，就不執行以下
+                if (!static_class.google_speeching && !sourceVideo.isPlaying)  //如果語音還再辨識中或影片還在撥放中，就不執行以下
                 {
                     static_class.btn_mode = 2;
                     status.text = "答案錄製中，按下按鈕停止錄音。";
                     p_btn.GetComponentInChildren<Text>().text = "Stop Record";
+                    pic_btn.image.sprite = record_icon;
                     static_class.do_record = true;
                     static_class.google_speeching = true;
                 }
@@ -138,6 +204,7 @@ public class VideoController : MonoBehaviour
                     status.text = "回答未達標準，再次錄製回答。";
                     static_class.btn_mode = 1;
                     p_btn.GetComponentInChildren<Text>().text = "Start Record";
+                    pic_btn.image.sprite = microphone_icon;
                 }
                 /*else
                 {                                   //接下來繼續Play
@@ -179,16 +246,18 @@ public class VideoController : MonoBehaviour
     void Update()
     {
         //Debug.Log("currentVideoDuration: " + currentVideoDuration);
-
-        if (currentVideoDuration >= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Start_nosound &&
-            currentVideoDuration <= static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound)
+        
+        if (currentVideoDuration >= now_nosound && currentVideoDuration <= now_startsound)
         {
-            sourceVideo.GetComponent<AudioSource>().volume = 0;
+                sourceVideo.GetComponent<AudioSource>().volume = 0;
         }else{
+            now_nosound = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].Start_nosound;
+            now_startsound = static_class.Courses[static_class.course_id].Clips[static_class.clip_id].End_nosound;
             sourceVideo.GetComponent<AudioSource>().volume = 1;
         }
         Debug.Log(sourceVideo.GetComponent<AudioSource>().volume);
         Debug.Log("currentVideoDuration : " + currentVideoDuration);
+        
 
         if (Input.GetButtonDown("A"))
         {
