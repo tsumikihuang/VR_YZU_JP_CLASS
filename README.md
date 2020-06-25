@@ -1,4 +1,4 @@
-# VR_YZU_JP_CLASS
+# 語言練習VR教室
 元智大學日文課教具開發
 實作>> Unity + cardboard + Google Cloud Speech +JSON
 <br/>Google Play商店 >> https://play.google.com/store/apps/details?id=com.tsumikihuang.vrcourse
