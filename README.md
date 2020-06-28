@@ -29,7 +29,7 @@
 ## 系統架構
 本系統架構圖如下:
 
-[image](https://github.com/tsumikihuang/00XR_modol_paint_shader/blob/master/%E5%9C%96%E7%89%872.png)
+[image](https://github.com/tsumikihuang/00XR_VR_YZU_JP_CLASS/blob/master/%E6%B5%81%E7%A8%8B.png)
 
 本APP設計在手機上運行並置入Cardboard 來進行VR環境下的觀看，開始畫面為使用Unity搭建的一個VR虛擬教室介面，內有許多已新建好的課程可以選擇。使用者使用藍芽遙控器來切換至下一個或上一個課程。同樣用藍芽遙控器選定課程後，將會播放該課程的VR360串流影片，影片中的人會問問題或有對話出現。所使用的VR360度影片為本組組員事先錄製，並上傳YouTube 平台。由於影片為串流連接，因此本系統不需占用過大的空間來提供影片，APP本身也得以輕量化。使得在課堂上部署變得更容易。
 　　使用者應依照影片中的劇情走向與角色進行互動，可能是回答問題、接續對話或填空對話的缺失語句。互動方式為當影片中的題目念完，影片會暫停撥放，系統將等待使用者按下錄音鍵並回答問題。當使用者回答完問題,再按一次錄音鍵，Google Cloud Speech API會將使用者的回答轉成文字，並顯示在題目介面中。回答完問題，正確答案才會出現於題目介面，這時系統會進行使用者回答與正確答案的字串比對，並依照正確率給予分數。
@@ -43,4 +43,4 @@
 (5) HTML / Javascript / Bootstrap / JQuery / Vue.js
 (6) GitHub API
 
-[image](https://github.com/tsumikihuang/00XR_modol_paint_shader/blob/master/%E5%9C%96%E7%89%872.png)
+![image](https://github.com/tsumikihuang/00XR_VR_YZU_JP_CLASS/blob/master/%E5%9B%9B%E5%80%8B%E4%BA%BA.png)
